@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Animated circles</title>
+
+<style>
+	body {
+  margin: 0;
+}
+
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#ui {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.9);
+  padding: .5em;
+}
+
+</style>
+
+<script src="https://twgljs.org/dist/4.x/twgl-full.js"></script>
+
+</head>
+
+<body>
+<canvas id="canvas"></canvas>
+<script>
+'use strict';
+const ctx = document.querySelector('canvas').getContext('2d');
+const m4 = twgl.m4;
+
+const stack = [];
+const current = () => stack[stack.length - 1];
+const pop = () => stack.pop();
+const identity = () => stack.push(m4.identity());
+const translate = (t) => stack.push(m4.translate(current(), t));
+const rotate = (axis, r) => stack.push(m4.axisRotate(current(), axis, r));
+const zAxis = [0, 0, 1];
+
+function render(time) {
+  time *= 0.001; // convert to seconds
+  
+  twgl.resizeCanvasToDisplaySize(ctx.canvas);
+  const {width, height} = ctx.canvas;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  
+  let sunMat;
+  let mercuryMat;
+  let venusMat;
+  let earthMat;
+  let moonMat;
+  let marsMat;
+  let jupiterMat;
+  let saturnMat;
+  let uranusMat;
+  let neptuneMat;
+
+  
+  identity();
+    // translate to center of solar system
+    translate([width / 2, height / 2, 0]);
+        sunMat = current();
+      rotate(zAxis, time / 10) // push(mercury orbit rotation)
+					translate([height / 15, 0, 0]); //push(mercury translation)
+          	rotate(zAxis, time * 8); // push(mercury rotation)
+            	mercuryMat = current();
+        	pop(); // mercury rotation
+      	pop(); // mercury translation
+    	pop(); // mercury rotation
+      rotate(zAxis, time / 15) // push(venus orbit rotation)
+					translate([height / 10, 0, 0]); //push(venus translation)
+          	rotate(zAxis, time * 8); // push(venus rotation)
+            	venusMat = current();
+        	pop(); // venus rotation
+      	pop(); // venus translation
+    	pop(); // venus rotation
+      rotate(zAxis, time / 2) // push(earth orbit rotation)
+        translate([height / 8, 0, 0]); //push(earth translation)
+          rotate(zAxis, time * 8); // push(earth rotation)
+            earthMat = current();  //
+          pop(); // earth rotation
+          rotate(zAxis, time * 2); //push(moon orbit rotation)
+            translate([height / 15, 0, 0]); // push(moon translation)
+              rotate(zAxis, time * 16); //push(moon rotation)
+                moonMat = current(); 
+              pop();  // moon rotation
+            pop();  // moon translation
+          pop();  // moon orbit rotation
+        pop();  // earth translation
+      pop();  // earth orbit rotation
+      	rotate(zAxis, time / 8) // push(mars orbit rotation)
+					translate([height / 5, 0, 0]); //push(mars translation)
+          	rotate(zAxis, time * 8); // push(mars rotation)
+            	marsMat = current();
+        	pop(); // mars rotation
+      	pop(); // mars translation
+    	pop(); // mars rotation
+      rotate(zAxis, time / 5) // push(jupiter orbit rotation)
+					translate([height / 4, 0, 0]); //push(jupiter translation)
+          	rotate(zAxis, time * 8); // push(jupiter rotation)
+            	jupiterMat = current();
+        	pop(); // jupiter rotation
+      	pop(); // jupiter translation
+    	pop(); // jupiter rotation
+      rotate(zAxis, time / 6) // push(saturn orbit rotation)
+					translate([height / 3, 0, 0]); //push(saturn translation)
+          	rotate(zAxis, time * 8); // push(saturn rotation)
+            	saturnMat = current();
+        	pop(); // saturn rotation
+      	pop(); // saturn translation
+    	pop(); // saturn rotation
+      rotate(zAxis, time / 10) // push(uranus orbit rotation)
+					translate([height / 2, 0, 0]); //push(uranus translation)
+          	rotate(zAxis, time * 8); // push(uranus rotation)
+            	uranusMat = current();
+        	pop(); // uranus rotation
+      	pop(); // uranus translation
+    	pop(); // uranus rotation
+      rotate(zAxis, time / 3) // push(neptune orbit rotation)
+					translate([height / 1.9, 0, 0]); //push(neptune translation)
+          	rotate(zAxis, time * 8); // push(neptune rotation)
+            	neptuneMat = current();
+        	pop(); // neptune rotation
+      	pop(); // neptune translation
+    	pop(); // neptune rotation
+    pop();  // center of solar system  
+  pop();  // identity
+  
+  drawSquare(sunMat, 40, '#ba2800');
+  drawSquare(mercuryMat, 10, 'orange');
+  drawSquare(venusMat, 10, '#ba9500');
+  drawSquare(earthMat, 20, 'orange');
+  drawSquare(moonMat, 5, 'blue');
+  drawSquare(marsMat, 20, 'gray');
+  drawSquare(jupiterMat, 20, '#b56c28');
+  drawSquare(saturnMat, 20, '#b56c28');
+  drawSquare(uranusMat, 20, '#00bab7');
+  drawSquare(neptuneMat, 20, '#0009ba');
+
+
+  requestAnimationFrame(render);
+}
+
+requestAnimationFrame(render);
+
+function drawSquare(mat, size, color) {
+  const {width, height} = ctx.canvas;
+  //ctx.setTransform(mat[0], mat[1], mat[4], mat[5], mat[12], mat[13]);
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.fill();
+	ctx.beginPath();
+	ctx.arc(mat[12],  mat[13], size * 0.3, 0, 2 * Math.PI);
+	ctx.stroke();
+}
+
+</script>
+</body>
+</html>
